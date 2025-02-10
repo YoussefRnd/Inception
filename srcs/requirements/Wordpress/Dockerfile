@@ -1,33 +1,24 @@
 FROM debian:11
 
-RUN apt-get update && apt-get install -y 
+# Install packages and PHP extensions
+RUN apt-get update && apt-get install -y --no-install-recommends \
+	php php-fpm php-mysql php-curl php-gd php-xml php-mbstring \
+	php-json php-zip php-opcache php-intl php-exif \
+	&& apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install php && \
-	php && \
-	php-fpm && \
-	php-mysql && \
-	php-curl && \
-	php-gd && \
-	php-xml && \
-	php-mbstring && \
-	php-json && \
-	php-zip && \
-	php-imagick && \
-	php-opcache && \
-	wget && \
-	unzip 
+# Download and set up WordPress
+RUN wget https://wordpress.org/latest.zip -O wordpress.zip && \
+	unzip wordpress.zip && rm wordpress.zip && \
+	mv wordpress /var/www/wordpress && \
+	useradd -m wordpress -d /var/www/wordpress && \
+	chown -R wordpress:wordpress /var/www/wordpress && \
+	chmod -R 755 /var/www/wordpress
 
-# Download Wordpress
-RUN wget https://wordpress.org/latest.zip && \
-	unzip latest.zip && \
-	rm latest.zip && \
-	mv wordpress /var/www/html
+# Set the working directory
+WORKDIR /var/www/wordpress
 
+RUN mkdir -p /run/php && chown -R wordpress:wordpress /run/php
 
-RUN  useradd -m -d /var/www/html/wordpress wordpress && \
-	chown -R wordpress:wordpress /var/www/html/wordpress && \
-	chmod -R 755 /var/www/html/wordpress
+ENTRYPOINT [ "php-fpm", "-F" ]
 
 USER wordpress
-
-WORKDIR /var/www/html/wordpress
