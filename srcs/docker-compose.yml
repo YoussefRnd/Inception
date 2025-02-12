@@ -1,0 +1,46 @@
+services:
+  mariadb:
+    build: 
+      context: ./requirements/MariaDb
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - wordpress-network
+
+  wordpress:
+    build:
+      context: ./requirements/Wordpress
+    container_name: wordpress
+    environment:
+      DB_NAME: wordpress
+      DB_USER: wordpress
+      DB_PASSWORD: wordpress
+      DB_HOST: mariadb
+    depends_on:
+      - mariadb
+    networks:
+      - wordpress-network
+
+  nginx:
+    build:
+      context: ./requirements/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - wordpress
+    networks:
+      - wordpress-network
+
+volumes:
+  mariadb_data:
+
+networks:
+  wordpress-network:
+    driver: bridge

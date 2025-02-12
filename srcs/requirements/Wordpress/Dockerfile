@@ -1,20 +1,20 @@
 FROM debian:11
 
-# Install packages and PHP extensions
-RUN apt-get update && apt-get install -y --no-install-recommends \
-	php php-fpm php-mysql php-curl php-gd php-xml php-mbstring \
-	php-json php-zip php-opcache php-intl php-exif curl \
-	ca-certificates \
-	&& apt-get clean && rm -rf /var/lib/apt/lists/*
+# Install PHP 7.4, FPM, required extensions, and other tools
+RUN apt update && apt-get install -y --no-install-recommends \
+    php7.4 php7.4-fpm php7.4-mysql php7.4-curl php7.4-gd php7.4-xml php7.4-mbstring \
+    php7.4-json php7.4-zip php7.4-opcache php7.4-intl php7.4-exif curl \
+    ca-certificates \
+    && apt clean && rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m -d /var/www/wordpress wordpress
+# Copy the WordPress installation script
+COPY ./tools/install-wp.sh /usr/local/bin/install-wp.sh
 
-COPY ./tools/install-wp.sh ./install-wp.sh
+# Make the script executable
+RUN chmod +x /usr/local/bin/install-wp.sh
 
-RUN chmod +x install-wp.sh
-
-USER wordpress
-
+# Expose the PHP-FPM port
 EXPOSE 9000
 
-CMD [ "sh", "install-wp.sh" ]
+# Run the WordPress installation script
+ENTRYPOINT [ "/usr/local/bin/install-wp.sh" ]
