@@ -10,10 +10,8 @@ RUN apt update && apt-get install -y --no-install-recommends \
 # Copy the WordPress installation script
 COPY ./tools/install-wp.sh /usr/local/bin/install-wp.sh
 
-# Make the script executable
 RUN chmod +x /usr/local/bin/install-wp.sh
 
-# Expose the PHP-FPM port
 EXPOSE 9000
 
 # Run the WordPress installation script

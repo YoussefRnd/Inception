@@ -24,6 +24,11 @@ services:
       DB_HOST: mariadb
     depends_on:
       - mariadb
+    secrets:
+      - db_root_password
+      - db_password
+    volumes:
+      - wordpress_data:/var/www/
     networks:
       - wordpress-network
 
@@ -35,11 +40,20 @@ services:
       - "80:80"
     depends_on:
       - wordpress
+    volumes:
+      - wordpress_data:/var/www/
     networks:
       - wordpress-network
 
+secrets:
+  db_root_password:
+    file: ./secrets/db_root_password.txt
+  db_password:
+    file: ./secrets/db_password.txt
+
 volumes:
   mariadb_data:
+  wordpress_data:
 
 networks:
   wordpress-network:

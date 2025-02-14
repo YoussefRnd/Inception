@@ -23,10 +23,12 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 
   echo "Downloading WordPress using WP-CLI..."
   wp core download --path="$WP_DIR" --allow-root
+  wp config create --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASSWORD --dbhost=mariadb:3306 --allow-root
+
 
   echo "Configuring WordPress..."
   cp "$WP_DIR/wp-config-sample.php" "$WP_DIR/wp-config.php"
-
+  
   # Update wp-config.php with database connection details
   sed -i "s/database_name_here/$DB_NAME/" "$WP_DIR/wp-config.php"
   sed -i "s/username_here/$DB_USER/" "$WP_DIR/wp-config.php"
