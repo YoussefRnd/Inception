@@ -31,7 +31,7 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 
   wp user create "${WP_SECONDARY_USER}" "${WP_SECONDARY_EMAIL}" --role="${WP_SECONDARY_ROLE}" --user_pass="${WP_SECONDARY_PASSWORD}" --allow-root
 
-  wp theme install twentynineteen --activate --allow-root
+  wp theme install twentytwentyfour --activate --allow-root
 
   echo "Setting file permissions..."
   chown -R www-data:www-data ${WP_DIR}

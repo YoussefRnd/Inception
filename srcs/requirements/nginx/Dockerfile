@@ -8,10 +8,13 @@ RUN mkdir -p /etc/ssl/certs /etc/ssl/private &&\
     openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
     -keyout /etc/ssl/private/nginx-selfsigned.key \
     -out /etc/ssl/certs/nginx-selfsigned.crt \
-    -subj "/C=MA/ST=Tangier/L=Tangier/O=Youssef/OU=Youssef/CN=yboumlak.42.fr"
+    -subj "/CN=yboumlak.42.fr"
 
 # Copy custom Nginx configuration file
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
 # Expose the Nginx port
-EXPOSE 443
+EXPOSE 80
+
+# Start Nginx
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
