@@ -1,43 +1,41 @@
 #!/bin/bash
 
-# Variables
-WP_DIR="/var/www/wordpress"
-DB_NAME=${DB_NAME:-wordpress}
-DB_USER=${DB_USER:-wordpress}
-DB_PASSWORD=${DB_PASSWORD:-wordpress}
-DB_HOST=${DB_HOST:-mariadb}
+DB_USER_PASSWORD=$(cat /run/secrets/db_user_password)
+WP_ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
+WP_SECONDARY_PASSWORD=$(cat /run/secrets/wp_secondary_password)
+DB_ROOT_PASSWORD=$(cat /run/secrets/db_root_password)
+
+# Download WP-CLI if not already available
+if [ ! -x "/usr/local/bin/wp" ]; then 
+  echo "Downloading WP-CLI..."
+  curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+  chmod +x wp-cli.phar
+  mv wp-cli.phar /usr/local/bin/wp
+fi
 
 # Check if WordPress is already installed
 if [ ! -f "$WP_DIR/wp-config.php" ]; then
   echo "WordPress not found. Installing WordPress..."
 
-  # Download WP-CLI if not already available
-  if [ ! -x "/usr/local/bin/wp" ]; then 
-    echo "Downloading WP-CLI..."
-    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-    chmod +x wp-cli.phar
-    mv wp-cli.phar /usr/local/bin/wp
-  fi
-
   mkdir -p $WP_DIR
+  cd ${WP_DIR}
 
   echo "Downloading WordPress using WP-CLI..."
-  wp core download --path="$WP_DIR" --allow-root
-  wp config create --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASSWORD --dbhost=mariadb:3306 --allow-root
-
-
-  echo "Configuring WordPress..."
-  cp "$WP_DIR/wp-config-sample.php" "$WP_DIR/wp-config.php"
+  wp core download --allow-root
   
-  # Update wp-config.php with database connection details
-  sed -i "s/database_name_here/$DB_NAME/" "$WP_DIR/wp-config.php"
-  sed -i "s/username_here/$DB_USER/" "$WP_DIR/wp-config.php"
-  sed -i "s/password_here/$DB_PASSWORD/" "$WP_DIR/wp-config.php"
-  sed -i "s/localhost/$DB_HOST/" "$WP_DIR/wp-config.php"
+  echo "Creating wp-config.php..."
+  wp config create --dbname="${DB_NAME}" --dbuser="${DB_USER}" --dbpass="${DB_USER_PASSWORD}" --dbhost="${DB_HOST}:3306" --allow-root
 
-  echo "Setting file permissions on $WP_DIR..."
-  chown -R www-data:www-data "$WP_DIR"
-  chmod -R 755 "$WP_DIR"
+  echo "Installing WordPress..."
+  wp core install --url="40.69.192.136" --title="${WP_TITLE}" --admin_user="${WP_ADMIN_USER}" --admin_password="${WP_ADMIN_PASSWORD}" --admin_email="${WP_ADMIN_EMAIL}" --allow-root
+
+  wp user create "${WP_SECONDARY_USER}" "${WP_SECONDARY_EMAIL}" --role="${WP_SECONDARY_ROLE}" --user_pass="${WP_SECONDARY_PASSWORD}" --allow-root
+
+  wp theme install twentynineteen --activate --allow-root
+
+  echo "Setting file permissions..."
+  chown -R www-data:www-data ${WP_DIR}
+  chmod -R 755 ${WP_DIR}
 fi
 
 # Ensure the /run/php directory exists and has the correct permissions
