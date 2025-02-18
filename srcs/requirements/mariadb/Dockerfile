@@ -11,9 +11,9 @@ RUN apt update && apt-get install -y --no-install-recommends \
 # Copy SQL template
 # COPY tools/init.sql.template /docker-entrypoint-initdb.d/init.sql.template
 
-COPY tools/setup.sh /usr/local/bin/setup.sh
-RUN chmod +x /usr/local/bin/setup.sh
+COPY tools/setup_mariadb.sh /usr/local/bin/setup_mariadb.sh
+RUN chmod +x /usr/local/bin/setup_mariadb.sh
 
 EXPOSE 3306
 
-ENTRYPOINT [ "/usr/local/bin/setup.sh" ]
+ENTRYPOINT [ "/usr/local/bin/setup_mariadb.sh" ]

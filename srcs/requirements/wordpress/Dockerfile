@@ -8,11 +8,11 @@ RUN apt update && apt-get install -y --no-install-recommends \
     && apt clean && rm -rf /var/lib/apt/lists/*
 
 # Copy the WordPress installation script
-COPY ./tools/install-wp.sh /usr/local/bin/install-wp.sh
+COPY ./tools/setup_wordpress.sh /usr/local/bin/setup_wordpress.sh
 
-RUN chmod +x /usr/local/bin/install-wp.sh
+RUN chmod +x /usr/local/bin/setup_wordpress.sh
 
 EXPOSE 9000
 
 # Run the WordPress installation script
-ENTRYPOINT [ "/usr/local/bin/install-wp.sh" ]
+ENTRYPOINT [ "/usr/local/bin/setup_wordpress.sh" ]

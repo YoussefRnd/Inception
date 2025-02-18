@@ -33,6 +33,13 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
 
   wp theme install twentytwentyfour --activate --allow-root
 
+  # add redis
+  wp plugin install redis-cache --activate --allow-root
+  wp redis enable --allow-root
+  wp config set WP_REDIS_HOST redis --allow-root
+  wp config set WP_REDIS_PORT 6379 --allow-root
+
+
   echo "Setting file permissions..."
   chown -R www-data:www-data ${WP_DIR}
   chmod -R 755 ${WP_DIR}

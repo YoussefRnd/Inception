@@ -1,7 +1,7 @@
 services:
   mariadb:
     build: 
-      context: ./requirements/MariaDb
+      context: ./requirements/mariadb
     container_name: mariadb
     environment:
       DB_NAME: ${DB_NAME}
@@ -18,7 +18,7 @@ services:
 
   wordpress:
     build:
-      context: ./requirements/Wordpress
+      context: ./requirements/wordpress
     container_name: wordpress
     environment:
       DOMAIN_NAME: ${DOMAIN_NAME}
@@ -61,6 +61,18 @@ services:
       - wordpress_data:/var/www/wordpress
     networks:
       - wordpress-network
+
+  redis:
+    build:
+      context: ./requirements/bonus/redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    depends_on:
+      - wordpress
+    networks:
+      - wordpress-network
+      
 
 secrets:
   db_root_password:
