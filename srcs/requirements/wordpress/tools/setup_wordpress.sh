@@ -24,7 +24,7 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
   wp core download --allow-root
   
   echo "Creating wp-config.php..."
-  wp config create --dbname="${DB_NAME}" --dbuser="${DB_USER}" --dbpass="${DB_USER_PASSWORD}" --dbhost="${DB_HOST}:3306" --allow-root
+  wp config create --dbname="${DB_NAME}" --dbuser="${DB_USER}" --dbpass="${DB_USER_PASSWORD}" --dbhost="${DB_HOST}" --allow-root
 
   echo "Installing WordPress..."
   wp core install --url="40.69.192.136" --title="${WP_TITLE}" --admin_user="${WP_ADMIN_USER}" --admin_password="${WP_ADMIN_PASSWORD}" --admin_email="${WP_ADMIN_EMAIL}" --allow-root
@@ -34,10 +34,10 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
   wp theme install twentytwentyfour --activate --allow-root
 
   # add redis
+  wp config set WP_REDIS_HOST redis --allow-root
+  wp config set WP_REDIS_PORT 6379 --raw --allow-root
   wp plugin install redis-cache --activate --allow-root
   wp redis enable --allow-root
-  wp config set WP_REDIS_HOST redis --allow-root
-  wp config set WP_REDIS_PORT 6379 --allow-root
 
 
   echo "Setting file permissions..."

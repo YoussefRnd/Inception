@@ -66,8 +66,6 @@ services:
     build:
       context: ./requirements/bonus/redis
     container_name: redis
-    ports:
-      - "6379:6379"
     depends_on:
       - wordpress
     networks:
