@@ -22,5 +22,5 @@ RUN apt-get update && apt-get install -y grafana && \
 EXPOSE 3000
 
 # Start Grafana
-ENTRYPOINT ["/usr/sbin/grafana-server"]
-CMD ["--config=/etc/grafana/grafana.ini", "--homepath=/usr/share/grafana", "cfg:default.paths.logs=/var/log/grafana", "cfg:default.paths.data=/var/lib/grafana", "cfg:default.paths.plugins=/var/lib/grafana/plugins"]
+ENTRYPOINT [ "/usr/sbin/grafana-server" ]
+CMD [ "--homepath=/usr/share/grafana" ]

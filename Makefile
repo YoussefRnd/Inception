@@ -1,6 +1,6 @@
 NAME = Inception
 
-dirs= ~/data/wordpress ~/data/mariadb
+dirs= ~/data/wordpress ~/data/mariadb ~/data/grafana
 
 all: $(NAME)
 

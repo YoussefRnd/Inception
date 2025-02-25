@@ -108,11 +108,8 @@ services:
     build:
       context: ./requirements/bonus/grafana
     container_name: grafana
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=strongpassword
     volumes:
       - grafana_data:/var/lib/grafana
-      - grafana_config:/etc/grafana
     networks:
       - wordpress-network
     ports:
@@ -142,7 +139,10 @@ volumes:
       o : bind
       type : none
   grafana_data:
-  grafana_config:
+    driver_opts:
+      device : /home/${USER}/data/grafana
+      o : bind
+      type : none
 
 networks:
   wordpress-network:
