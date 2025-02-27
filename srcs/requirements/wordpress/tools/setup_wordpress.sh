@@ -27,7 +27,7 @@ if [ ! -f "$WP_DIR/wp-config.php" ]; then
   wp config create --dbname="${DB_NAME}" --dbuser="${DB_USER}" --dbpass="${DB_USER_PASSWORD}" --dbhost="${DB_HOST}" --allow-root
 
   echo "Installing WordPress..."
-  wp core install --url="40.69.192.136" --title="${WP_TITLE}" --admin_user="${WP_ADMIN_USER}" --admin_password="${WP_ADMIN_PASSWORD}" --admin_email="${WP_ADMIN_EMAIL}" --allow-root
+  wp core install --url="10.11.248.24" --title="${WP_TITLE}" --admin_user="${WP_ADMIN_USER}" --admin_password="${WP_ADMIN_PASSWORD}" --admin_email="${WP_ADMIN_EMAIL}" --allow-root
 
   wp user create "${WP_SECONDARY_USER}" "${WP_SECONDARY_EMAIL}" --role="${WP_SECONDARY_ROLE}" --user_pass="${WP_SECONDARY_PASSWORD}" --allow-root
 

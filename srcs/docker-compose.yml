@@ -1,149 +1,147 @@
 services:
-  mariadb:
-    build: 
-      context: ./requirements/mariadb
-    container_name: mariadb
-    environment:
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_ROOT_PASSWORD: /run/secrets/db_root_password
-      DB_USER_PASSWORD: /run/secrets/db_user_password
-    secrets:
-      - db_root_password
-      - db_user_password
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    networks:
-      - wordpress-network
+    mariadb:
+        build:
+            context: ./requirements/mariadb
+        container_name: mariadb
+        environment:
+            DB_NAME: ${DB_NAME}
+            DB_USER: ${DB_USER}
+        secrets:
+            - db_root_password
+            - db_user_password
+        volumes:
+            - mariadb_data:/var/lib/mysql
+        networks:
+            - wordpress-network
 
-  wordpress:
-    build:
-      context: ./requirements/wordpress
-    container_name: wordpress
-    environment:
-      DOMAIN_NAME: ${DOMAIN_NAME}
-      WP_DIR: ${WP_DIR}
-      WP_TITLE: ${WP_TITLE}                  
-      DB_NAME: ${DB_NAME}
-      DB_USER: ${DB_USER}
-      DB_HOST: mariadb
-      WP_ADMIN_USER: ${WP_ADMIN_USER}
-      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}        
-      WP_SECONDARY_USER: ${WP_SECONDARY_USER}
-      WP_SECONDARY_EMAIL: ${WP_SECONDARY_EMAIL}
-      WP_SECONDARY_ROLE: ${WP_SECONDARY_ROLE}
-    depends_on:
-      - mariadb
-    secrets:
-      - db_user_password
-      - wp_admin_password
-      - wp_secondary_password
-      - db_root_password
-    volumes:
-      - wordpress_data:/var/www/wordpress
-    networks:
-      - wordpress-network
+    wordpress:
+        build:
+            context: ./requirements/wordpress
+        container_name: wordpress
+        environment:
+            DOMAIN_NAME: ${DOMAIN_NAME}
+            WP_DIR: ${WP_DIR}
+            WP_TITLE: ${WP_TITLE}
+            DB_NAME: ${DB_NAME}
+            DB_USER: ${DB_USER}
+            DB_HOST: mariadb
+            WP_ADMIN_USER: ${WP_ADMIN_USER}
+            WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+            WP_SECONDARY_USER: ${WP_SECONDARY_USER}
+            WP_SECONDARY_EMAIL: ${WP_SECONDARY_EMAIL}
+            WP_SECONDARY_ROLE: ${WP_SECONDARY_ROLE}
+        depends_on:
+            - mariadb
+        secrets:
+            - db_user_password
+            - wp_admin_password
+            - wp_secondary_password
+            - db_root_password
+        volumes:
+            - wordpress_data:/var/www/wordpress
+        networks:
+            - wordpress-network
 
-  nginx:
-    build:
-      context: ./requirements/nginx
-    container_name: nginx
-    depends_on:
-      - wordpress
-      - mariadb
-    volumes:
-      - wordpress_data:/var/www/wordpress
-    networks:
-      - wordpress-network
-    ports:
-      - "80:80"
+    nginx:
+        build:
+            context: ./requirements/nginx
+        container_name: nginx
+        depends_on:
+            - wordpress
+            - mariadb
+        volumes:
+            - wordpress_data:/var/www/wordpress
+        networks:
+            - wordpress-network
+        ports:
+            - "443:443"
 
-  redis:
-    build:
-      context: ./requirements/bonus/redis
-    container_name: redis
-    depends_on:
-      - wordpress
-    networks:
-      - wordpress-network
-      
-  ftp:
-    build:
-      context: ./requirements/bonus/ftp
-    container_name: ftp
-    environment:
-      WP_DIR: ${WP_DIR}
-      FTP_USER: ${FTP_USER}
-    depends_on:
-      - wordpress
-    secrets:
-      - ftp_password
-    volumes:
-      - wordpress_data:/var/www/wordpress
-    networks:
-      - wordpress-network
-    ports:
-      - "21:21"
-      - "30000-30100:30000-30100"
+    redis:
+        build:
+            context: ./requirements/bonus/redis
+        container_name: redis
+        depends_on:
+            - wordpress
+        networks:
+            - wordpress-network
 
-  japan:
-    build:
-      context: ./requirements/bonus/static_website
-    container_name: japan
-    networks:
-      - wordpress-network
-    ports:
-      - "4242:4242"
+    ftp:
+        build:
+            context: ./requirements/bonus/ftp
+        container_name: ftp
+        environment:
+            WP_DIR: ${WP_DIR}
+            FTP_USER: ${FTP_USER}
+        depends_on:
+            - wordpress
+        secrets:
+            - ftp_password
+        volumes:
+            - wordpress_data:/var/www/wordpress
+        networks:
+            - wordpress-network
+        ports:
+            - "21:21"
+            - "30000-30100:30000-30100"
 
-  adminer:
-    build:
-      context: ./requirements/bonus/adminer
-    container_name: adminer
-    networks:
-      - wordpress-network
-    ports:
-      - "8080:8080"
+    japan:
+        build:
+            context: ./requirements/bonus/static_website
+        container_name: japan
+        networks:
+            - wordpress-network
+        ports:
+            - "80:80"
 
-  grafana:
-    build:
-      context: ./requirements/bonus/grafana
-    container_name: grafana
-    volumes:
-      - grafana_data:/var/lib/grafana
-    networks:
-      - wordpress-network
-    ports:
-      - "3000:3000"
+    adminer:
+        build:
+            context: ./requirements/bonus/adminer
+        container_name: adminer
+        networks:
+            - wordpress-network
+        ports:
+            - "8080:8080"
+
+    grafana:
+        build:
+            context: ./requirements/bonus/grafana
+        container_name: grafana
+        volumes:
+            - grafana_data:/var/lib/grafana
+        networks:
+            - wordpress-network
+        ports:
+            - "3000:3000"
 
 secrets:
-  db_root_password:
-    file: ./secrets/db_root_password.txt
-  db_user_password:
-    file: ./secrets/db_user_password.txt
-  wp_admin_password:
-    file: ./secrets/wp_admin_password.txt
-  wp_secondary_password:
-    file: ./secrets/wp_secondary_password.txt
-  ftp_password:
-    file: ./secrets/ftp_password.txt
+    db_root_password:
+        file: ./secrets/db_root_password.txt
+    db_user_password:
+        file: ./secrets/db_user_password.txt
+    wp_admin_password:
+        file: ./secrets/wp_admin_password.txt
+    wp_secondary_password:
+        file: ./secrets/wp_secondary_password.txt
+    ftp_password:
+        file: ./secrets/ftp_password.txt
 
 volumes:
-  mariadb_data:
-    driver_opts:
-      device : /home/${USER}/data/mariadb
-      o : bind
-      type : none
-  wordpress_data:
-    driver_opts:
-      device : /home/${USER}/data/wordpress
-      o : bind
-      type : none
-  grafana_data:
-    driver_opts:
-      device : /home/${USER}/data/grafana
-      o : bind
-      type : none
+    mariadb_data:
+        driver_opts:
+            device: /home/${USER}/data/mariadb
+            o: bind
+            type: none
+    wordpress_data:
+        driver_opts:
+            device: /home/${USER}/data/wordpress
+            o: bind
+            type: none
+    grafana_data:
+        driver_opts:
+            device: /home/${USER}/data/grafana
+            o: bind
+            type: none
 
 networks:
-  wordpress-network:
-    driver: bridge
+    wordpress-network:
+        driver: bridge

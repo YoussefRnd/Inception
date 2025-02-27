@@ -1,13 +1,13 @@
 FROM debian:11
 
 RUN apt update && apt-get install -y --no-install-recommends \
-  python3 \
-  && apt clean && rm -rf /var/lib/apt/lists/*
+	python3 \
+	&& apt clean && rm -rf /var/lib/apt/lists/*
 
-COPY ./static_website_files/ /app
+COPY ./japan/ /app
 
 WORKDIR /app
 
-EXPOSE 4242
+EXPOSE 80
 
-ENTRYPOINT ["python3", "-m", "http.server", "4242", "--bind", "0.0.0.0"]
+ENTRYPOINT ["python3", "-m", "http.server", "80", "--bind", "0.0.0.0"]

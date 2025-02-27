@@ -14,7 +14,7 @@ RUN mkdir -p /etc/ssl/certs /etc/ssl/private &&\
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 
 # Expose the Nginx port
-EXPOSE 80
+EXPOSE 443
 
 # Start Nginx
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
